@@ -1,0 +1,86 @@
+//procedure pertambahan
+main:
+push b		; masukan b ke stack (tumpukkan 1)
+    	push a		; masukan a ke stack (tumpukkan 2)
+    	push fmtScan	; masukan fmtScan ke stack (tumpukkan 3)
+    	call scanf	; dipanggil fungsi scanf, membaca tumpukan itu dibalik jadi kita bacanya yg terakhir sampe yang pertama -> fmtScan, a, b -> “%d %d” a b
+    	add esp, 12
+ 
+    	push dword [a]	; masukan a ke stack (tumpukkan 1)
+    	push dword [b]	; masukan b ke stack (tumpukkan 2)
+    	call tambah		; panggil fungsi tambah
+     
+    	push eax
+   	push fmtPrint
+    	call printf
+    	add esp, 8
+     
+    jmp exit
+
+tambah:			; fungsi tambah
+    push ebp			; masukan ebp ke stack (tumpukan 3) 
+(di tumpukkan ada a, b, ebp)
+    mov ebp, esp		; ebp = esp ,, oiya esp itu penunjuk tumpukkan yang terakhir
+    mov eax, [ebp+3*4]	; eax = a ,, tumpukkan yang ke 3 dari terakhir,, 
+	ebp -> penujuk, 3 -> 3 tumpukkan dari terakhir, 4 - > setiap tumpukkan bernilai 4
+	maka jadinya [ebp+3*4] 
+    add eax, [ebp+2*4]		; eax = eax + b ,, -> eax = a + b
+	[ebp+2*4] - > tumpukkan yang ke 2 dari terakhir
+    pop ebp			; keluarkan tumpukkan ebp 
+	(di tumpukkan tinggal ada a, b ) ,, ebpnya udah di keluarin ,, ada 2 doang di tumpukkan
+    ret 2*4		; karena ada 2 tumpukkan maka ret 2*4
+	-> 2 karena ada 2 tumpukkan ,, 4 karena setiap tumpukkan bernilai 4
+
+
+//tambah input sesuai n
+extern scanf
+extern printf
+extern fflush
+    
+section .data
+	fmtScan db "%d", 0
+	fmtPrint db "%d", 10, 0
+          	 
+section .bss
+	n resd 1
+	a resd 1
+    
+section .text
+	global main
+   	 
+main:
+	push n   		 ; input n
+	push fmtScan
+	call scanf
+	add esp, 8
+    
+	mov esi, [n]    ; esi buat counter
+	mov edi, 0   	 ; tokoh utamanya edi bukan eax
+    
+input:
+    	push a   		 ; input angka lagi
+	push fmtScan
+	call scanf
+	add esp, 8
+ 
+    	mov ebx, [a]    ; ebx = angka inputan
+    	add edi, ebx    ; edi = edi + ebx
+   	 
+    	dec esi   	 ; esi--
+   	cmp esi, 0   	 ; compare esi dengan 0
+ja input   	 ; jika lebih dari 0, maka masih input
+    
+   	push edi   	 ; jika tidak lebih dari sama dengan 0, maka print edi(hasil)
+	push fmtPrint
+	call printf
+	add esp, 8
+    
+exit:
+	push 0
+	call fflush
+	mov eax, 1
+	mov ebx, 0
+	int 0x80
+
+
+
