@@ -1,0 +1,332 @@
+//nilai akhir (prosedur)
+extern scanf
+extern printf
+extern fflush
+  
+segment .data
+    masukan db "%d %d %d %d %d %d %d", 0
+    keluaran db "%d", 10, 0
+      
+segment .bss
+    tugas resd 4
+    kuis resd 4
+    projek resd 4
+    uasp resd 4
+    utsp resd 4
+    uas resd 4
+    uts resd 4
+      
+section .text
+    global main
+      
+nilai_akhir:
+    push ebp
+    mov ebp, esp
+    sub esp, 8
+      
+    mov ecx, 0
+    mov eax, [ebp+8]
+    mov edi, 30
+    mul edi
+    add ecx, eax
+      
+    mov eax, [ebp+12]
+    mov edi, 30
+    mul edi
+    add ecx, eax
+      
+    mov eax, [ebp+16]
+    mov edi, 10
+    mul edi
+    add ecx, eax
+      
+    mov eax, [ebp+20]
+    mov edi, 10
+    mul edi
+    add ecx, eax
+      
+    mov eax, [ebp+24]
+    mov edi, 10
+    mul edi
+    add ecx, eax
+  
+    mov eax, [ebp+28]
+    mov edi, 5
+    mul edi
+    add ecx, eax
+      
+    mov eax, [ebp+32]
+    mov edi, 5
+    mul edi
+    add ecx, eax
+      
+    mov eax, ecx
+    cdq
+    mov edi, 100
+    div edi
+      
+    mov esp, ebp
+    pop ebp
+    ret
+      
+main: 
+    push tugas
+    push kuis
+    push projek
+    push uasp
+    push utsp
+    push uas
+    push uts
+    push masukan
+    call scanf
+    add esp, 32
+      
+    push dword [tugas]
+    push dword [kuis]
+    push dword [projek]
+    push dword [uasp]
+    push dword [utsp]
+    push dword [uas]
+    push dword [uts]
+    call nilai_akhir
+    add esp, 28
+      
+    cmp edx, 50
+    jae plus1
+      
+    push eax
+    push keluaran
+    call printf
+    add esp, 8
+    jmp exit
+  
+plus1:
+    add eax, 1
+    push eax
+    push keluaran
+    call printf
+    add esp, 8  
+      
+exit:
+    push 0
+    call fflush
+    add esp, 4
+      
+    mov eax, 1
+    mov ebx, 0
+    int 80h
+    
+//rataan suhu
+extern scanf,printf,fflush
+  
+section .data
+    masuk db "%d",0
+    fmt_in db "%f", 0
+    fmt_out db "%.1f", 10, 0
+  
+section .bss
+    n resd 4
+    tmp resd 1
+    rataan resq 1
+ 
+section .text
+global main 
+main:
+        push    n
+        push    masuk
+        call    scanf
+        add     esp,8
+          
+        mov     esi,[n]
+        sub     esi,1
+          
+        push    tmp
+        push    fmt_in
+        call    scanf                
+        add     esp,8
+ 
+        finit
+        fld1
+        fmul    dword [tmp]
+          
+L1 :            
+        push    tmp
+        push    fmt_in
+        call    scanf                
+        add     esp,8
+ 
+        fadd    dword [tmp]
+          
+        sub     esi,1
+        cmp     esi,0
+        ja      L1
+          
+ 
+        fidiv   dword [n]
+          
+        fstp    qword [rataan]          
+         
+        push    dword [rataan+4]
+        push    dword [rataan]
+        push    fmt_out
+        call    printf                  
+        add     esp,12
+ 
+exit:
+        push 0
+        call fflush
+        add esp,4
+        mov eax,1
+        mov ebx,0
+        int 0x80
+ 
+//celtofar 
+extern scanf,printf,fflush
+  
+section .data
+    fmt_in db "%f", 0
+    fmt_out db "%.2f", 10, 0
+    a dd 1.8
+    b dd 32.0
+  
+section .bss
+    suhu resd 1
+    hasil resq 1
+ 
+section .text
+global main 
+main:
+        push    suhu
+        push    fmt_in
+        call    scanf                
+        add     esp,8
+ 
+        finit
+        fld  dword[a]
+        fld dword[suhu]
+        fmulp
+        fstp qword[hasil]
+         
+        fld dword[b]
+        fld qword[hasil]
+        faddp
+        fstp qword[hasil]
+         
+        push dword[hasil+4]
+        push dword[hasil]
+        push    fmt_out
+        call    printf                  
+        add     esp,12
+ 
+exit:
+        push 0
+        call fflush
+        add esp,4
+        mov eax,1
+        mov ebx,0
+        int 0x80
+        
+
+//menghitung huruf
+extern scanf, printf, fflush
+    
+section .data
+    masukan db '%s %s',0
+    keluaran db "%d",10,0
+        
+section .bss
+    string resb 40
+    x resb 2
+        
+section .text
+    global main
+        
+main: 
+            push x
+            push string
+            push masukan
+            call scanf
+            add esp, 12
+             
+            mov ebx,0   
+            mov ecx,40
+            mov edi,string
+            mov al,[x]
+        lup:
+            repne scasb
+            add ebx,1
+            cmp ecx,0
+            ja lup
+              
+            sub ebx,1 
+             
+            push ebx
+            push keluaran
+            call printf
+            add esp,8
+    
+exit:            
+            push 0
+            call fflush
+            add esp,4
+              
+            mov eax,1
+            mov ebx,0
+            int 0x80
+            
+   
+// jarak dari titik asal
+  
+  extern scanf, printf,fflush
+ 
+section .data
+    fmt_in db "%f %f", 0
+    fmt_out db "%f", 10, 0
+ 
+section .bss
+    a resd 1
+    aa resq 1
+    b resd 1
+    bb resq 1
+    pht resq 1
+ 
+section .text
+global main
+main:
+        push a
+        push b
+        push fmt_in
+        call scanf                  
+        add esp, 12
+   
+        fld dword [a]
+        fld dword [a]
+        fmulp
+        fstp dword [aa]                                            
+                 
+        fld dword [b]
+        fld dword [b]
+        fmulp
+        fstp dword [bb]
+         
+        fld dword [aa]
+        fld dword [bb]
+        faddp
+        fsqrt        
+        fstp qword [pht]            
+ 
+        push dword [pht+4]
+        push dword [pht]
+        push fmt_out
+        call printf                  
+        add esp, 12
+ 
+exit:
+        push 0
+        call fflush
+        mov eax,1
+        mov ebx,0
+        int 0x80
+        
+//
+
